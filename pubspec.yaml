@@ -16,7 +16,8 @@ dependencies:
   latlong: ^0.6.1
   pedantic: ^1.9.2
   # rxdart: ^0.25.0
-  rxdart: ^0.24.1
+  # rxdart: ^0.24.1
+  rxdart: ^0.26.0
 
 dev_dependencies:
   flutter_test:
