@@ -19,6 +19,22 @@ import 'state/stateful_markers.dart';
 import 'state/tile_layer.dart';
 import 'types.dart';
 
+extension on GeoSerie {
+  List<LatLng> toLatLng2({bool ignoreErrors = false}) {
+    final points = <LatLng>[];
+    for (final geoPoint in geoPoints) {
+      try {
+        points.add(geoPoint.point);
+      } catch (_) {
+        if (!ignoreErrors) {
+          rethrow;
+        }
+      }
+    }
+    return points;
+  }
+}
+
 /// The map controller
 class StatefulMapController {
   /// Provide a Flutter map [MapController]
@@ -199,7 +215,7 @@ class StatefulMapController {
       bool isDotted = false}) async {
     final points =
         GeoSerie(type: GeoSerieType.line, name: "serie", geoPoints: geoPoints)
-            .toLatLng();
+            .toLatLng2();
     await _linesState.addLine(
         name: name,
         points: points,
@@ -265,20 +281,20 @@ class StatefulMapController {
           break;
         case GeoJsonFeatureType.line:
           final line = feature.geometry as GeoJsonLine;
-          unawaited(addLine(name: line.name, points: line.geoSerie.toLatLng()));
+          unawaited(addLine(name: line.name, points: line.geoSerie.toLatLng2()));
           break;
         case GeoJsonFeatureType.multiline:
           final ml = feature.geometry as GeoJsonMultiLine;
           for (final line in ml.lines) {
             unawaited(
-                addLine(name: line.name, points: line.geoSerie.toLatLng()));
+                addLine(name: line.name, points: line.geoSerie.toLatLng2()));
           }
           break;
         case GeoJsonFeatureType.polygon:
           final poly = feature.geometry as GeoJsonPolygon;
           for (final geoSerie in poly.geoSeries) {
             unawaited(
-                addPolygon(name: geoSerie.name, points: geoSerie.toLatLng()));
+                addPolygon(name: geoSerie.name, points: geoSerie.toLatLng2()));
           }
           break;
         case GeoJsonFeatureType.multipolygon:
@@ -286,7 +302,7 @@ class StatefulMapController {
           for (final poly in mp.polygons) {
             for (final geoSerie in poly.geoSeries) {
               unawaited(
-                  addPolygon(name: geoSerie.name, points: geoSerie.toLatLng()));
+                  addPolygon(name: geoSerie.name, points: geoSerie.toLatLng2()));
             }
           }
           break;
