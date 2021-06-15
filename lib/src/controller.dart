@@ -24,7 +24,7 @@ extension on GeoSerie {
     final points = <LatLng>[];
     for (final geoPoint in geoPoints) {
       try {
-        points.add(geoPoint.point);
+        points.add(LatLng(geoPoint.point.latitude, geoPoint.point.longitude));
       } catch (_) {
         if (!ignoreErrors) {
           rethrow;
